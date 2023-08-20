@@ -1,8 +1,8 @@
 import { GetStaticProps, NextPage } from "next";
-import SortableTable from "../../components/SortableTable";
+import SortableTable from "../../components/table/SortableTable";
 import data from "../../utils/dummydata.json";
 
-interface ArticleInterface {
+interface ArticlesInterface {
     id: string;
     title: string;
     authors: string;
@@ -13,12 +13,13 @@ interface ArticleInterface {
     evidence: string;
 }
 
-type ArticleProps = {
-    articles: ArticleInterface[];
+
+type ArticlesProps = {
+    articles: ArticlesInterface[];
 };
 
-const Articles: NextPage<ArticleProps> = ({ articles }) => {
-    const headers: { key: keyof ArticlesInterface; label: string} [] = [
+const Articles: NextPage<ArticlesProps> = ({ articles }) => {
+    const headers: { key: keyof ArticlesInterface; label: string }[] = [
         { key: "title", label: "Title" },
         { key: "authors", label: "Authors" },
         { key: "source", label: "Source" },
@@ -37,8 +38,9 @@ const Articles: NextPage<ArticleProps> = ({ articles }) => {
     );
 };
 
-export const getStaticProps: GetStaticProps<ArticleProps> = async (_) => {
-    const articles = data.articles.map((article) => {
+export const getStaticProps: GetStaticProps<ArticlesProps> = async (_) => {
+    // Map the data to ensure all articles have consistent property names
+    const articles = data.articles.map((article) => ({
         id: article.id ?? article._id,
         title: article.title,
         authors: article.authors,
@@ -48,7 +50,6 @@ export const getStaticProps: GetStaticProps<ArticleProps> = async (_) => {
         claim: article.claim,
         evidence: article.evidence,
     }));
-
     return {
         props: {
             articles,
